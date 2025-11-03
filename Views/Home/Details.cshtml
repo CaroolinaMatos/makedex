@@ -2,28 +2,85 @@
 
 @{
     ViewData["Title"] = "Detalhes do Produto";
+
+    // Variáveis para evitar parsing problems no Razor
+    var numero = Model?.Numero;
+    var nome = Model?.Nome ?? "-";
+    var descricao = String.IsNullOrEmpty(Model?.Descricao) ? "-" : Model.Descricao;
+    var valorFormatado = Model != null ? String.Format("{0:C}", Model.valor) : "-";
+    var tipoNome = Model?.Tipo?.Nome ?? "-";
+    var imagem = String.IsNullOrEmpty(Model?.Imagem) ? "placeholder.png" : Model.Imagem;
+
+    // Cores usadas (rosa / nude)
+    var bgSoft = "#fff9f9"; // fundo suave
+    var accent = "#d36486"; // rosa principal (CTA)
+    var accentLight = "#f6e1e6"; // nude claro (badges / fundos)
+    var priceColor = "#b33a63"; // cor do preço
+    var borderSoft = "rgba(179,58,99,0.06)";
 }
 
-<h2>@Model.Nome</h2>
+<div class="container py-4">
+    <!-- Cabeçalho: título grande + badge -->
+    <div class="d-flex justify-content-between align-items-start mb-3">
+        <div>
+            <h1 class="h3 mb-1 fw-bold" style="color:#2b2b2b;">@nome</h1>
+            <div class="text-muted small">Produto • <span class="fw-semibold">@tipoNome</span></div>
+        </div>
 
-<div class="row">
-    <div class="col-md-5">
-        <img src="~/images/@(String.IsNullOrEmpty(Model.Imagem) ? "placeholder.png" : Model.Imagem)"
-            class="img-fluid rounded" alt="@Model.Nome" />
+        <div class="text-end">
+            <span class="badge"
+                style="background:@accentLight; color:@priceColor; padding:.5rem .75rem; font-size:.95rem; font-weight:600; border-radius:.6rem; border:1px solid rgba(0,0,0,0.03);">
+                @tipoNome
+            </span>
+        </div>
     </div>
-    <div class="col-md-7">
-        <dl class="row">
-            <dt class="col-sm-4">Número</dt>
-            <dd class="col-sm-8">@Model.Numero</dd>
 
-            <dt class="col-sm-4">Tipo</dt>
-            <dd class="col-sm-8">@Model.Tipo?.Nome</dd>
+    <!-- Card principal com imagem e informações em destaque -->
+    <div class="row g-4">
+        <div class="col-lg-5">
+            <div class="card border-0 shadow-sm"
+                style="background:@bgSoft; border:1px solid @borderSoft; border-radius:12px;">
+                <img src="~/img/@imagem" class="card-img-top img-fluid rounded" alt="@nome"
+                    style="max-height:520px; object-fit:cover; border-radius:10px;" />
+            </div>
+        </div>
 
-            <dt class="col-sm-4">Valor</dt>
-            <dd class="col-sm-8">@String.Format("{0:C}", Model.valor)</dd>
+        <div class="col-lg-7">
+            <div class="bg-white border rounded-3 p-3 shadow-sm mb-3"
+                style="border-color:@borderSoft; background:@bgSoft;">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="text-uppercase small text-muted">Número</div>
+                        <div class="fw-bold fs-5" style="color:#2b2b2b;">@numero</div>
+                    </div>
 
-            <dt class="col-sm-4">Descrição</dt>
-            <dd class="col-sm-8">@(!String.IsNullOrEmpty(Model.Descricao) ? Model.Descricao : "-")</dd>
-        </dl>
+                    <div class="text-end">
+                        <div class="text-uppercase small text-muted">Valor</div>
+                        <div class="fw-bold fs-4" style="color:@priceColor;">@valorFormatado</div>
+                    </div>
+                </div>
+            </div>
+
+            <dl class="row">
+                <dt class="col-sm-4 text-muted">Descrição</dt>
+                <dd class="col-sm-8">
+                    <p class="lead mb-0" style="color:#333;">@descricao</p>
+                </dd>
+
+                <dt class="col-sm-4 text-muted mt-3">Tipo</dt>
+                <dd class="col-sm-8 mt-3">@tipoNome</dd>
+            </dl>
+
+            <div class="mt-4 d-flex flex-wrap gap-2">
+                <a asp-action="Index" class="btn btn-outline-secondary d-flex justify-content-center align-items-center">Voltar</a>
+
+                <!-- CTA grande e com cor rosa/nude via estilo inline -->
+                <a asp-action="Index" asp-controller="Home" class="btn btn-lg"
+                    style="background:@accent; border-color:@accent; color:#fff; padding:.55rem 1.25rem; font-weight:700; border-radius:.6rem;">
+                    Comprar agora
+                </a>
+
+            </div>
+        </div>
     </div>
 </div>
